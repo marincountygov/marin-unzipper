@@ -1,0 +1,265 @@
+:root {
+  --unzip-drop-border: color-mix(in srgb, var(--app-accent) 55%, transparent);
+  --unzip-drop-bg: color-mix(in srgb, var(--app-accent) 8%, transparent);
+  --unzip-table-border: var(--app-border);
+}
+
+html,
+body {
+  overflow-x: hidden;
+}
+
+.app-main {
+  padding-block: 1.5rem 2rem;
+}
+
+.app-title-row,
+.unzip-results__header,
+.unzip-toolbar,
+.unzip-drop-actions,
+.unzip-summary,
+.unzip-password-actions,
+.unzip-actions,
+.unzip-results__badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  align-items: center;
+}
+
+.app-title-row {
+  gap: 1rem;
+}
+
+.app-icon svg,
+.marinos-banner__icon svg,
+.marinos-menu__icon svg,
+.unzip-drop-overlay__icon svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+  fill: none;
+  stroke: currentColor;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.app-icon svg,
+.unzip-drop-overlay__icon svg {
+  stroke-width: 1;
+}
+
+.unzip-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(18rem, 22rem);
+  gap: 1rem;
+  align-items: start;
+  min-width: 0;
+}
+
+.unzip-grid > * {
+  min-width: 0;
+}
+
+.unzip-dropzone {
+  border: 2px dashed var(--unzip-drop-border);
+  border-radius: var(--pico-border-radius);
+  background: var(--unzip-drop-bg);
+  min-height: 18rem;
+  display: grid;
+  place-items: center;
+  padding: 2rem;
+  text-align: center;
+  transition: border-color 160ms ease, background-color 160ms ease, transform 160ms ease;
+}
+
+.unzip-dropzone[data-active="true"] {
+  border-color: var(--app-accent);
+  background: color-mix(in srgb, var(--app-accent) 14%, transparent);
+  transform: translateY(-1px);
+}
+
+.unzip-drop-actions,
+.unzip-summary {
+  justify-content: center;
+}
+
+.unzip-summary {
+  margin-block-start: 1rem;
+}
+
+.unzip-warning,
+.unzip-details,
+.unzip-results {
+  margin-block-start: 1rem;
+}
+
+.unzip-details dl {
+  display: grid;
+  gap: 0.75rem;
+  margin: 0;
+}
+
+.unzip-details dl > div {
+  display: grid;
+  grid-template-columns: minmax(6rem, 10rem) minmax(0, 1fr);
+  gap: 0.75rem;
+}
+
+.unzip-details dt {
+  font-weight: 700;
+}
+
+.unzip-details dd {
+  margin: 0;
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.unzip-progress {
+  margin-block: 1rem;
+}
+
+.unzip-progress progress {
+  width: 100%;
+}
+
+.unzip-actions {
+  justify-content: flex-start;
+}
+
+.unzip-results__header {
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.unzip-results__header h2 {
+  margin-block-end: 0.25rem;
+}
+
+.unzip-toolbar {
+  margin-block: 1rem;
+  align-items: end;
+}
+
+.unzip-output-name {
+  flex: 1 1 16rem;
+  margin: 0;
+}
+
+.unzip-output-name label {
+  font-weight: 700;
+}
+
+.unzip-table-wrap {
+  overflow-x: auto;
+  border: 1px solid var(--unzip-table-border);
+  border-radius: var(--pico-border-radius);
+}
+
+.unzip-table {
+  margin: 0;
+  min-width: 44rem;
+}
+
+.unzip-table th,
+.unzip-table td {
+  vertical-align: middle;
+}
+
+.unzip-table th:first-child,
+.unzip-table td:first-child {
+  width: 3rem;
+  text-align: center;
+}
+
+.unzip-file-name {
+  font-weight: 700;
+  overflow-wrap: anywhere;
+}
+
+.unzip-file-path-note {
+  margin-block-start: 0.15rem;
+  font-size: 0.875rem;
+  color: var(--app-muted);
+  overflow-wrap: anywhere;
+}
+
+.unzip-file-download {
+  white-space: nowrap;
+}
+
+.unzip-empty {
+  margin-block: 1rem;
+}
+
+.unzip-drop-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+  background: color-mix(in srgb, var(--app-accent) 18%, var(--app-surface));
+  backdrop-filter: blur(2px);
+}
+
+body.is-dragging .unzip-drop-overlay {
+  display: flex;
+}
+
+.unzip-drop-overlay__panel {
+  width: min(34rem, 100%);
+  border-radius: 1rem;
+  padding: 2rem;
+  text-align: center;
+  background: var(--app-surface);
+  color: var(--app-text);
+  box-shadow: 0 1.5rem 4rem rgba(0, 0, 0, 0.18);
+}
+
+.unzip-drop-overlay__icon {
+  display: inline-grid;
+  place-items: center;
+  width: 4rem;
+  height: 4rem;
+  margin-block-end: 1rem;
+  color: var(--app-accent);
+}
+
+
+#app-status-message:empty {
+  display: none;
+}
+
+
+button[hidden],
+[hidden] {
+  display: none !important;
+}
+
+@media (max-width: 1100px) {
+  .unzip-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 720px) {
+  .unzip-dropzone {
+    min-height: 14rem;
+    padding: 1.25rem;
+  }
+
+  .unzip-details dl > div {
+    grid-template-columns: 1fr;
+    gap: 0.15rem;
+  }
+
+  .unzip-toolbar > button,
+  .unzip-actions > button,
+  .unzip-drop-actions > button,
+  .unzip-password-actions > button {
+    width: 100%;
+  }
+}

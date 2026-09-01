@@ -1,0 +1,238 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Marin Unzipper | County of Marin</title>
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 48'%3E%3Crect width='48' height='48' rx='10' fill='%23000'/%3E%3Cg fill='none' stroke='%23e5b53b' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M14 6h13l7 7v29H14z'/%3E%3Cpath d='M27 6v8h7'/%3E%3Cpath d='M21 17v-2M21 24v-3M21 31v-3'/%3E%3Ccircle cx='21' cy='36' r='3'/%3E%3C/g%3E%3C/svg%3E">
+    <meta name="description" content="Decrypt and extract ZIP files locally in the browser.">
+    <link rel="stylesheet" href="vendor/pico.min.css">
+    <link rel="stylesheet" href="shared/app-brand.css">
+    <link rel="stylesheet" href="assets/app.css">
+  </head>
+  <body>
+    <a class="skip-link" href="#main">Skip to main content</a>
+
+    <div class="unzip-drop-overlay" aria-hidden="true">
+      <div class="unzip-drop-overlay__panel">
+        <span class="unzip-drop-overlay__icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24"><path d="M13.659 22H18a2 2 0 0 0 2-2V8a2.4 2.4 0 0 0-.706-1.706l-3.588-3.588A2.4 2.4 0 0 0 14 2H6a2 2 0 0 0-2 2v11.5"/><path d="M14 2v5a1 1 0 0 0 1 1h5"/><path d="M8 12v-1"/><path d="M8 18v-2"/><path d="M8 7V6"/><circle cx="8" cy="20" r="2"/></svg>
+        </span>
+        <h2>Drop a ZIP file to open it</h2>
+        <p class="app-help-text">Files are processed locally in this browser. They are not uploaded by this page.</p>
+      </div>
+    </div>
+
+    <div class="marinos-banner">
+      <div class="marinos-banner__inner">
+        <div class="menu marinos-menu">
+          <button type="button" class="menu-toggle marinos-menu__toggle" aria-expanded="false" aria-controls="marinos-menu-panel">
+            <span class="marinos-banner__icon" aria-hidden="true"><svg viewBox="0 0 48 48"><rect x="7" y="7" width="13" height="13" rx="2"/><rect x="28" y="7" width="13" height="13" rx="2"/><rect x="7" y="28" width="13" height="13" rx="2"/><rect x="28" y="28" width="13" height="13" rx="2"/></svg></span>
+            MarinOS<sup>ALPHA</sup>
+            <svg class="menu-toggle__caret" aria-hidden="true" viewBox="0 0 16 16"><path d="M4 6l4 4 4-4"/></svg>
+          </button>
+          <div id="marinos-menu-panel" class="menu-panel marinos-menu__panel" hidden>
+            <a href="https://marincountygov.github.io/marin-magic/"><span class="marinos-menu__icon" aria-hidden="true"><svg viewBox="0 0 48 48"><path d="m24 5 2.8 9.2L36 17l-9.2 2.8L24 29l-2.8-9.2L12 17l9.2-2.8zM37 28l1.6 5.4L44 35l-5.4 1.6L37 42l-1.6-5.4L30 35l5.4-1.6zM11 28l1.2 3.8L16 33l-3.8 1.2L11 38l-1.2-3.8L6 33l3.8-1.2z"/></svg></span>MarinMagic</a>
+            <a href="https://marincountygov.github.io/marin-waymaker/"><span class="marinos-menu__icon" aria-hidden="true"><svg viewBox="0 0 48 48"><circle cx="11" cy="12" r="4"/><circle cx="37" cy="12" r="4"/><circle cx="24" cy="37" r="4"/><path d="M15 12h18M35 16 26 33M13 16l9 17"/></svg></span>Marin WayMaker</a>
+            <a href="https://marincountygov.github.io/marin-docs/"><span class="marinos-menu__icon" aria-hidden="true"><svg viewBox="0 0 48 48"><path d="M13 6h17l8 8v28H13z"/><path d="M30 6v9h8M19 24h13M19 31h13"/></svg></span>MarinDocs</a>
+            <a class="marinos-menu__all" href="https://marincountygov.github.io/marin-os/">Browse all in MarinOS</a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <header class="app-header">
+      <div class="app-header__inner">
+        <div class="app-identity">
+          <div class="app-title-row">
+            <span class="app-icon" aria-hidden="true">
+              <span class="app-logo__mark" aria-hidden="true">
+  <span class="app-logo__mark" aria-hidden="true">
+  <span class="app-logo__mark" aria-hidden="true">
+  <span class="app-logo__mark" aria-hidden="true">
+ <span class="app-logo__mark" aria-hidden="true">
+  <svg
+    class="app-logo__icon lucide lucide-package-open"
+    xmlns="http://www.w3.org/2000/svg"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    stroke-width="2"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+    focusable="false"
+  >
+    <path d="M12 22v-9" />
+    <path d="M15.17 2.21a1.67 1.67 0 0 1 1.63 0L21 4.57a1.93 1.93 0 0 1 0 3.36L8.82 14.79a1.655 1.655 0 0 1-1.64 0L3 12.43a1.93 1.93 0 0 1 0-3.36z" />
+    <path d="M20 13v3.87a2.06 2.06 0 0 1-1.11 1.83l-6 3.08a1.93 1.93 0 0 1-1.78 0l-6-3.08A2.06 2.06 0 0 1 4 16.87V13" />
+    <path d="M21 12.43a1.93 1.93 0 0 0 0-3.36L8.83 2.2a1.64 1.64 0 0 0-1.63 0L3 4.57a1.93 1.93 0 0 0 0 3.36l12.18 6.86a1.636 1.636 0 0 0 1.63 0z" />
+  </svg>
+</span>
+</span></span></span>
+</span>
+            </span>
+            <div class="app-title-copy">
+              <h1 class="app-title">Marin Unzipper</h1>
+              <p class="app-subtitle">Decrypt and decompress ZIP files locally in your browser.</p>
+            </div>
+          </div>
+        </div>
+        <div class="app-header__actions">
+          <button type="button" class="app-menu-toggle secondary" id="menu-toggle" aria-expanded="false" aria-controls="app-nav">Menu</button>
+          <nav class="app-nav" id="app-nav" aria-label="Application navigation">
+            <a href="#start" aria-current="page">Start</a>
+            <a href="#about">About</a>
+            <a href="#updates">Updates</a>
+          </nav>
+        </div>
+      </div>
+    </header>
+
+    <main id="main" class="container app-main" tabindex="-1">
+      <div id="app-status-message" class="app-alert app-alert--info" role="status" aria-live="polite" aria-atomic="true"></div>
+
+      <section id="start" data-tab-section="start" aria-labelledby="start-heading">
+        <div class="unzip-grid">
+          <div class="app-card">
+            <div id="dropzone" class="unzip-dropzone" data-active="false">
+              <div>
+                <h2 id="start-heading">Drop a ZIP file anywhere on this page</h2>
+                <p class="app-help-text">You can also choose a ZIP file using the button below. Files remain only on your device.</p>
+                <div class="unzip-drop-actions">
+                  <button type="button" id="choose-zip-button">Choose ZIP file</button>
+                  <button type="button" id="clear-zip-button" class="secondary" disabled>Clear ZIP</button>
+                </div>
+                <input id="zip-input" class="visually-hidden" type="file" accept=".zip,application/zip,application/x-zip-compressed">
+                <div class="unzip-summary" aria-live="polite">
+                  <span class="app-badge" id="selected-file-name">No ZIP selected</span>
+                  <span class="app-badge" id="selected-file-size">0 bytes</span>
+                </div>
+              </div>
+            </div>
+
+            <div id="large-file-warning" class="app-alert app-alert--warning unzip-warning" hidden>
+              Large ZIP files can be limited by available browser memory. Extracting files keeps the extracted content in this browser until you clear the ZIP or reload the page.
+            </div>
+
+            <div id="zip-details" class="unzip-details" hidden>
+              <h3>Selected ZIP</h3>
+              <dl>
+                <div>
+                  <dt>File</dt>
+                  <dd id="zip-detail-name"></dd>
+                </div>
+                <div>
+                  <dt>Size</dt>
+                  <dd id="zip-detail-size"></dd>
+                </div>
+              </dl>
+            </div>
+          </div>
+
+          <form id="unzip-form" class="app-card" novalidate>
+            <h2>Settings</h2>
+
+            <div class="app-field">
+              <label for="zip-password">Password</label>
+              <input id="zip-password" name="zip-password" type="password" autocomplete="current-password">
+              <small id="password-help" class="app-help-text">Required for encrypted ZIP files. Passwords are not stored by this page.</small>
+            </div>
+
+            <div class="unzip-password-actions app-field">
+              <button type="button" id="toggle-password-button" class="secondary" aria-pressed="false">Show password</button>
+            </div>
+
+            <div id="progress-wrap" class="unzip-progress" hidden>
+              <label for="unzip-progress">Progress</label>
+              <progress id="unzip-progress" value="0" max="100"></progress>
+              <p id="progress-text" class="app-help-text">Waiting to start.</p>
+            </div>
+
+            <div class="unzip-actions">
+              <button type="submit" id="open-zip-button" disabled>Decrypt and list files</button>
+              <button type="button" id="cancel-button" class="secondary" hidden>Cancel</button>
+            </div>
+          </form>
+        </div>
+
+        <section id="results-card" class="app-card unzip-results" aria-labelledby="results-heading" hidden>
+          <div class="unzip-results__header">
+            <div>
+              <h2 id="results-heading">Extracted files</h2>
+              <p class="app-help-text">Download files individually, or select multiple files and create an unencrypted ZIP.</p>
+            </div>
+            <div class="unzip-results__badges" aria-live="polite">
+              <span class="app-badge" id="extracted-count">0 files</span>
+              <span class="app-badge" id="extracted-size">0 bytes</span>
+              <span class="app-badge" id="selected-count">0 selected</span>
+            </div>
+          </div>
+
+          <div class="unzip-toolbar">
+            <button type="button" id="select-all-button" class="secondary">Select all</button>
+            <button type="button" id="clear-selection-button" class="secondary">Clear selection</button>
+            <div class="app-field unzip-output-name">
+              <label for="output-zip-name">Unencrypted ZIP file name</label>
+              <input id="output-zip-name" type="text" value="marin-unzipped-files.zip" autocomplete="off">
+            </div>
+            <button type="button" id="download-selected-button" disabled>Download selected as unencrypted ZIP</button>
+          </div>
+
+          <div id="results-empty" class="app-empty unzip-empty" hidden>No files were found in this ZIP.</div>
+          <div class="unzip-table-wrap">
+            <table class="unzip-table">
+              <thead>
+                <tr>
+                  <th scope="col"><span class="visually-hidden">Select</span></th>
+                  <th scope="col">File</th>
+                  <th scope="col">Size</th>
+                  <th scope="col">Download</th>
+                </tr>
+              </thead>
+              <tbody id="results-body"></tbody>
+            </table>
+          </div>
+        </section>
+      </section>
+
+      <section id="about" class="app-card app-prose" data-tab-section="about" aria-labelledby="about-heading" hidden>
+        <h2 id="about-heading">About Marin Unzipper</h2>
+        <p>Marin Unzipper opens ZIP files in your browser. It can decrypt password-protected ZIP files and decompress the files inside them.</p>
+        <p>Files remain only on your device. This page does not upload the ZIP file, the extracted files, or the password.</p>
+
+        <h3>How to use it</h3>
+        <ol>
+          <li>Choose or drop a ZIP file.</li>
+          <li>Enter the password if the ZIP file is encrypted.</li>
+          <li>Select <strong>Decrypt and list files</strong>.</li>
+          <li>Download one file at a time, or check multiple files and download them together as a new unencrypted ZIP.</li>
+        </ol>
+
+        <h3>About the unencrypted ZIP download</h3>
+        <p>When you select multiple extracted files, Marin Unzipper creates a new ZIP file without password protection. This is meant for workflows where the original encrypted ZIP needs to be opened and then repackaged for a system that does not accept encrypted ZIP files.</p>
+
+        <h3>Compatibility</h3>
+        <p>Marin Unzipper uses a local zip.js library. It supports standard ZIP files and WinZip AES-encrypted ZIP files when the correct password is provided.</p>
+
+        <h3>Security notes</h3>
+        <p>Only extract files from ZIP files you trust. Do not include sensitive information in file names unless your department has approved that naming format.</p>
+      </section>
+
+      <section id="updates" class="app-card app-prose" data-tab-section="updates" data-updates-repo="marin-unzipper" data-app-name="Marin Unzipper" aria-labelledby="updates-heading" hidden>
+        <h2 id="updates-heading">Updates</h2>
+        <p data-updates-status class="app-help-text" role="status" aria-live="polite" aria-atomic="true">Marin Unzipper does not load update data automatically.</p>
+        <p><a href="https://github.com/marincountygov/marin-unzipper/commits/main" target="_blank" rel="noreferrer">View release history on GitHub</a></p>
+      </section>
+    </main>
+
+    <footer class="app-footer" role="contentinfo"><div class="app-footer__inner"><a href="https://marincountygov.github.io/marin-os/">MarinOS</a></div></footer>
+    <a class="app-feedback" href="https://form.asana.com/?k=qVUT83d5DBmlDiIyi-WAyQ&amp;d=23133298259496" target="_blank" rel="noreferrer">Feedback</a>
+
+    <noscript>
+      <div class="container app-alert app-alert--danger">JavaScript is required to decrypt and extract ZIP files in the browser.</div>
+    </noscript>
+    <script src="assets/vendor/zip.js/zip-native.min.js"></script>
+    <script src="shared/app-shell.js"></script>
+    <script src="assets/app.js"></script>
+  </body>
+</html>
