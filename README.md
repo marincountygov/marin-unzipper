@@ -18,7 +18,7 @@ Marin Unzipper is a MarinOS browser application for opening ZIP files locally. I
 - It does not store passwords.
 - It does not create encrypted ZIP files.
 - It does not write extracted files directly to the user's file system. The browser download action is used instead.
-- It does not automatically fetch MarinOS catalog data or GitHub update data at runtime.
+- It does not automatically fetch GitHub update data at runtime. The MarinOS banner refreshes from the published MarinOS catalog.
 
 ## Local dependencies
 
