@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Marin Unzipper | County of Marin</title>
-    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 48'%3E%3Crect width='48' height='48' rx='10' fill='%23000'/%3E%3Cg fill='none' stroke='%23e5b53b' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M14 6h13l7 7v29H14z'/%3E%3Cpath d='M27 6v8h7'/%3E%3Cpath d='M21 17v-2M21 24v-3M21 31v-3'/%3E%3Ccircle cx='21' cy='36' r='3'/%3E%3C/g%3E%3C/svg%3E">
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 48'%3E%3Crect width='48' height='48' rx='10' fill='%23000'/%3E%3Cg fill='none' stroke='%23e5b53b' stroke-width='3.2' stroke-linecap='round' stroke-linejoin='round' transform='translate(9,9) scale(1.25)'%3E%3Cpath d='M12 22v-9'/%3E%3Cpath d='M15.17 2.21a1.67 1.67 0 0 1 1.63 0L21 4.57a1.93 1.93 0 0 1 0 3.36L8.82 14.79a1.655 1.655 0 0 1-1.64 0L3 12.43a1.93 1.93 0 0 1 0-3.36z'/%3E%3Cpath d='M20 13v3.87a2.06 2.06 0 0 1-1.11 1.83l-6 3.08a1.93 1.93 0 0 1-1.78 0l-6-3.08A2.06 2.06 0 0 1 4 16.87V13'/%3E%3Cpath d='M21 12.43a1.93 1.93 0 0 0 0-3.36L8.83 2.2a1.64 1.64 0 0 0-1.63 0L3 4.57a1.93 1.93 0 0 0 0 3.36l12.18 6.86a1.636 1.636 0 0 0 1.63 0z'/%3E%3C/g%3E%3C/svg%3E">
     <meta name="description" content="Decrypt and extract ZIP files locally in the browser.">
     <link rel="stylesheet" href="vendor/pico.min.css">
     <link rel="stylesheet" href="shared/app-brand.css">
@@ -29,7 +29,7 @@
           <button type="button" class="menu-toggle marinos-menu__toggle" aria-expanded="false" aria-controls="marinos-menu-panel">
             <span class="marinos-banner__icon" aria-hidden="true"><svg viewBox="0 0 48 48"><rect x="7" y="7" width="13" height="13" rx="2"/><rect x="28" y="7" width="13" height="13" rx="2"/><rect x="7" y="28" width="13" height="13" rx="2"/><rect x="28" y="28" width="13" height="13" rx="2"/></svg></span>
             MarinOS<sup>ALPHA</sup>
-            <svg class="menu-toggle__caret" aria-hidden="true" viewBox="0 0 16 16"><path d="M4 6l4 4 4-4"/></svg>
+            <svg class="menu-toggle__caret" aria-hidden="true" viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></svg>
           </button>
           <div id="marinos-menu-panel" class="menu-panel marinos-menu__panel" hidden>
             <a href="https://marincountygov.github.io/marin-magic/"><span class="marinos-menu__icon" aria-hidden="true"><svg viewBox="0 0 48 48"><path d="m24 5 2.8 9.2L36 17l-9.2 2.8L24 29l-2.8-9.2L12 17l9.2-2.8zM37 28l1.6 5.4L44 35l-5.4 1.6L37 42l-1.6-5.4L30 35l5.4-1.6zM11 28l1.2 3.8L16 33l-3.8 1.2L11 38l-1.2-3.8L6 33l3.8-1.2z"/></svg></span>MarinMagic</a>
@@ -48,30 +48,7 @@
         <div class="app-identity">
           <div class="app-title-row">
             <span class="app-icon" aria-hidden="true">
-              <span class="app-logo__mark" aria-hidden="true">
-  <span class="app-logo__mark" aria-hidden="true">
-  <span class="app-logo__mark" aria-hidden="true">
-  <span class="app-logo__mark" aria-hidden="true">
- <span class="app-logo__mark" aria-hidden="true">
-  <svg
-    class="app-logo__icon lucide lucide-package-open"
-    xmlns="http://www.w3.org/2000/svg"
-    viewBox="0 0 24 24"
-    fill="none"
-    stroke="currentColor"
-    stroke-width="2"
-    stroke-linecap="round"
-    stroke-linejoin="round"
-    focusable="false"
-  >
-    <path d="M12 22v-9" />
-    <path d="M15.17 2.21a1.67 1.67 0 0 1 1.63 0L21 4.57a1.93 1.93 0 0 1 0 3.36L8.82 14.79a1.655 1.655 0 0 1-1.64 0L3 12.43a1.93 1.93 0 0 1 0-3.36z" />
-    <path d="M20 13v3.87a2.06 2.06 0 0 1-1.11 1.83l-6 3.08a1.93 1.93 0 0 1-1.78 0l-6-3.08A2.06 2.06 0 0 1 4 16.87V13" />
-    <path d="M21 12.43a1.93 1.93 0 0 0 0-3.36L8.83 2.2a1.64 1.64 0 0 0-1.63 0L3 4.57a1.93 1.93 0 0 0 0 3.36l12.18 6.86a1.636 1.636 0 0 0 1.63 0z" />
-  </svg>
-</span>
-</span></span></span>
-</span>
+              <svg viewBox="0 0 24 24"><path d="M12 22v-9"/><path d="M15.17 2.21a1.67 1.67 0 0 1 1.63 0L21 4.57a1.93 1.93 0 0 1 0 3.36L8.82 14.79a1.655 1.655 0 0 1-1.64 0L3 12.43a1.93 1.93 0 0 1 0-3.36z"/><path d="M20 13v3.87a2.06 2.06 0 0 1-1.11 1.83l-6 3.08a1.93 1.93 0 0 1-1.78 0l-6-3.08A2.06 2.06 0 0 1 4 16.87V13"/><path d="M21 12.43a1.93 1.93 0 0 0 0-3.36L8.83 2.2a1.64 1.64 0 0 0-1.63 0L3 4.57a1.93 1.93 0 0 0 0 3.36l12.18 6.86a1.636 1.636 0 0 0 1.63 0z"/></svg>
             </span>
             <div class="app-title-copy">
               <h1 class="app-title">Marin Unzipper</h1>
