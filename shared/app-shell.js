@@ -1,6 +1,4 @@
 (() => {
-  "use strict";
-
   const menuToggle = document.querySelector("#menu-toggle");
   const navigation = document.querySelector("#app-nav");
   const menuQuery = window.matchMedia("(max-width: 720px)");
@@ -14,8 +12,7 @@
     menuToggle.addEventListener("click", () => {
       const open = menuToggle.getAttribute("aria-expanded") !== "true";
       menuToggle.setAttribute("aria-expanded", String(open));
-      if (open) navigation.setAttribute("data-open", "true");
-      else navigation.removeAttribute("data-open");
+      navigation.toggleAttribute("data-open", open);
     });
 
     navigation.addEventListener("click", (event) => {
@@ -72,12 +69,18 @@
     });
   });
 
-  // MarinOS banner menu: refresh from the published catalog so new apps
-  // appear automatically. If the fetch fails, the static links in index.html
-  // remain in place as a fallback. Cache the catalog for six hours.
+  // MarinOS banner menu: refresh from marinos/catalog.json so a new app
+  // shows up in every other app's banner automatically, instead of every
+  // app's HTML needing a hand edit. Falls back to the page's static links —
+  // never touches the DOM — if the fetch fails, times out, or the response
+  // isn't shaped as expected. Cached in localStorage for a few hours so a
+  // visit doesn't refetch the catalog on every page load.
   const marinosMenuPanel = document.querySelector("#marinos-menu-panel");
   if (marinosMenuPanel) {
     const CATALOG_URL = "https://marincountygov.github.io/marin-os/catalog.json";
+    // Bump this whenever the expected catalog shape or rendering changes
+    // (for example, adding the `icon` field) so browsers holding an older
+    // cached shape refetch immediately instead of waiting out the TTL.
     const CACHE_KEY = "marinos-catalog-cache-v2";
     const CACHE_TTL_MS = 6 * 60 * 60 * 1000;
 
@@ -98,7 +101,7 @@
       try {
         localStorage.setItem(CACHE_KEY, JSON.stringify({ entries, fetchedAt: Date.now() }));
       } catch {
-        // Storage unavailable; fetching again on the next load is acceptable.
+        // Storage full or unavailable — refetching next load is fine.
       }
     }
 
@@ -110,7 +113,6 @@
 
       const allLink = marinosMenuPanel.querySelector(".marinos-menu__all");
       marinosMenuPanel.querySelectorAll("a:not(.marinos-menu__all)").forEach((link) => link.remove());
-
       const links = items
         .map((entry) => {
           const icon =
@@ -120,7 +122,6 @@
           return `<a href="${entry.url}">${icon}${entry.name}</a>`;
         })
         .join("");
-
       if (allLink) allLink.insertAdjacentHTML("beforebegin", links);
       else marinosMenuPanel.insertAdjacentHTML("beforeend", links);
     }
@@ -227,6 +228,9 @@
     updateCurrentSection();
   }
 
+  // Sortable table columns: a <thead> button[data-sort-key="foo"] sorts the
+  // tbody's rows by their data-sort-foo attribute. Rows don't need any JS
+  // registration — this reads whatever data-sort-* attributes are present.
   document.querySelectorAll("table").forEach((table) => {
     const sortButtons = table.querySelectorAll("thead button[data-sort-key]");
     const tbody = table.querySelector(":scope > tbody");
@@ -258,6 +262,10 @@
     });
   });
 
+  // Copy-to-clipboard: any button[data-copy-value] copies that value and
+  // shows brief feedback. Announces through #app-status-message if present
+  // (the standard app-shell live region), otherwise a page-supplied
+  // [data-copy-status] live region, if either exists.
   document.addEventListener("click", (event) => {
     const button = event.target.closest("[data-copy-value]");
     if (!button) return;
@@ -273,10 +281,13 @@
         if (status) status.textContent = button.dataset.copyAnnounce || `Copied ${value}`;
       })
       .catch(() => {
-        if (status) status.textContent = `Couldn't copy ${value}; copy it manually.`;
+        if (status) status.textContent = `Couldn't copy ${value} — copy it manually`;
       });
   });
 
+  // Share: any button[data-action="share"] copies the current page URL and
+  // reports through a sibling .doc-action-status inside the same
+  // .doc-actions group, if present.
   document.querySelectorAll('[data-action="share"]').forEach((button) => {
     button.addEventListener("click", async () => {
       const status = button.closest(".doc-actions")?.querySelector(".doc-action-status") ?? null;
@@ -284,11 +295,20 @@
         await navigator.clipboard.writeText(window.location.href);
         if (status) status.textContent = "Link copied";
       } catch {
-        if (status) status.textContent = "Couldn't copy; copy the address bar link instead.";
+        if (status) status.textContent = "Couldn't copy — copy the address bar link instead";
       }
     });
   });
 
+  // Tab sections: elements sharing a data-tab-section="name" show together,
+  // hidden unless "name" matches the current hash — everything else in the
+  // group stays hidden, so a page reads as one section at a time (Help shows
+  // only Help, Updates shows only Updates) instead of stacking under
+  // whatever's already showing. An unrecognized or empty hash falls back to
+  // the first name encountered in the page, so there's no need for an
+  // explicit "Home" tab pointing at the default. Pairs automatically with
+  // any #app-nav whose links use matching #name hashes — no per-page
+  // JavaScript needed.
   const tabSections = document.querySelectorAll("[data-tab-section]");
   if (tabSections.length) {
     const tabNames = [];
@@ -316,11 +336,100 @@
     window.addEventListener("hashchange", showTabFromHash);
   }
 
+  // Updates: any [data-updates-repo="repo"] section lazy-loads that repo's
+  // 10 most recent commits from the GitHub API the first time it becomes
+  // visible, and renders them into its own [data-updates-list]. Visibility
+  // is detected by watching the section's `hidden` attribute, so it works
+  // with whatever tab/hash-routing a page already has (or none, if the
+  // section is never hidden) — no per-page JavaScript needed. A bare repo
+  // name is assumed to be marincountygov/<repo>; pass "owner/repo" to
+  // override. Add [data-app-name="App Name"] on the same section so the
+  // status line reads "App Name release notes." once loaded, instead of the
+  // generic "Latest commits loaded." — the single description the section
+  // needs, not a separate static line plus a loading message.
   document.querySelectorAll("[data-updates-repo]").forEach((section) => {
-    const appName = section.dataset.appName || "This app";
+    const repo = section.dataset.updatesRepo;
+    const appName = section.dataset.appName;
+    const loadedText = appName ? `${appName} release notes.` : "Latest commits loaded.";
     const status = section.querySelector("[data-updates-status]");
-    if (status) {
-      status.textContent = `${appName} does not load update data automatically. Use the repository link on this page to review release history.`;
+    const list = section.querySelector("[data-updates-list]");
+    if (!repo || !list) return;
+
+    const owner = repo.includes("/") ? repo : `marincountygov/${repo}`;
+    let loaded = false;
+
+    function escapeHtml(value) {
+      return String(value ?? "")
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;");
     }
+
+    async function loadUpdates() {
+      if (loaded) return;
+      if (status) status.textContent = "Loading latest commits...";
+      list.innerHTML = "";
+      try {
+        // Fetch more than we display: merge-PR commits are filtered out
+        // below (they're noise, not a real change), so 15 fetched usually
+        // leaves close to 10 real ones to show.
+        const response = await fetch(`https://api.github.com/repos/${owner}/commits?per_page=15`, {
+          headers: { Accept: "application/vnd.github+json" },
+        });
+        if (!response.ok) throw new Error(`GitHub API error: ${response.status}`);
+        const commits = (await response.json()).filter(
+          (commit) => !/^Merge pull request #\d+/.test(String(commit?.commit?.message ?? ""))
+        );
+        if (!Array.isArray(commits) || !commits.length) {
+          if (status) status.textContent = "No recent commits found.";
+          return;
+        }
+        loaded = true;
+        if (status) status.textContent = loadedText;
+        list.innerHTML = commits
+          .slice(0, 10)
+          .map((commit) => {
+            const message = String(commit?.commit?.message ?? "").trim();
+            const title = message.split("\n")[0] || "Untitled commit";
+            const bodyLines = message
+              .split("\n")
+              .slice(1)
+              .map((line) => line.trim().replace(/^[-*]\s*/, ""))
+              .filter(Boolean);
+            const date = commit?.commit?.committer?.date
+              ? new Date(commit.commit.committer.date).toLocaleString([], {
+                  year: "numeric",
+                  month: "short",
+                  day: "numeric",
+                  hour: "numeric",
+                  minute: "2-digit",
+                })
+              : "Date unavailable";
+            const url = commit?.html_url || `https://github.com/${owner}/commits`;
+            const body =
+              bodyLines.length > 1
+                ? `<ul>${bodyLines.map((line) => `<li>${escapeHtml(line)}</li>`).join("")}</ul>`
+                : bodyLines.length === 1
+                  ? `<p>${escapeHtml(bodyLines[0])}</p>`
+                  : "";
+            return (
+              `<article class="app-card"><h3><a href="${escapeHtml(url)}" target="_blank" rel="noreferrer">${escapeHtml(title)}</a></h3>` +
+              `<p class="app-help-text">${escapeHtml(date)}</p>` +
+              body +
+              `</article>`
+            );
+          })
+          .join("");
+      } catch (error) {
+        console.error(error);
+        if (status) status.textContent = "Could not load updates right now.";
+      }
+    }
+
+    if (!section.hidden) loadUpdates();
+
+    new MutationObserver(() => {
+      if (!section.hidden) loadUpdates();
+    }).observe(section, { attributes: true, attributeFilter: ["hidden"] });
   });
 })();
