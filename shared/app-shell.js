@@ -126,23 +126,27 @@
       else marinosMenuPanel.insertAdjacentHTML("beforeend", links);
     }
 
+    // Stale-while-revalidate: the cache is only for instant paint on repeat
+    // visits, never for skipping the network. Always fetch fresh in the
+    // background and re-render if it differs, so a catalog.json fix reaches
+    // a returning visitor on the next load instead of up to CACHE_TTL_MS
+    // later — a stale-icon report once took hours to explain because of
+    // this cache, before it revalidated on every load like this.
     const cachedEntries = readCatalogCache();
-    if (cachedEntries) {
-      renderMarinosMenu(cachedEntries);
-    } else {
-      const controller = new AbortController();
-      const timeout = setTimeout(() => controller.abort(), 4000);
-      fetch(CATALOG_URL, { signal: controller.signal })
-        .then((response) => (response.ok ? response.json() : Promise.reject(new Error("bad response"))))
-        .then((entries) => {
-          writeCatalogCache(entries);
-          renderMarinosMenu(entries);
-        })
-        .catch(() => {
-          // Leave the page's static banner links as-is.
-        })
-        .finally(() => clearTimeout(timeout));
-    }
+    if (cachedEntries) renderMarinosMenu(cachedEntries);
+
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 4000);
+    fetch(CATALOG_URL, { signal: controller.signal })
+      .then((response) => (response.ok ? response.json() : Promise.reject(new Error("bad response"))))
+      .then((entries) => {
+        writeCatalogCache(entries);
+        if (JSON.stringify(entries) !== JSON.stringify(cachedEntries)) renderMarinosMenu(entries);
+      })
+      .catch(() => {
+        // Leave whatever's already rendered (cache or static banner links) as-is.
+      })
+      .finally(() => clearTimeout(timeout));
   }
 
   const documentHeadings = document.querySelectorAll(
