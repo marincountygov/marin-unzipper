@@ -1,4 +1,4 @@
-/* MarinOS brand bundle v1.16.0 */
+/* MarinOS brand bundle v1.16.1 */
 @font-face {
   font-family: "Jost";
   src: url("../vendor/fonts/Jost-wght.ttf") format("truetype");
@@ -149,6 +149,7 @@ body {
   margin: 0;
   background: var(--app-bg-soft);
   color: var(--app-text);
+  font-family: var(--app-font-body);
 }
 
 nav {
