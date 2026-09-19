@@ -9,7 +9,7 @@
 
 @font-face {
   font-family: "Open Sans";
-  src: url("../vendor/fonts/open-sans/OpenSans-VariableFont_wdth,wght.woff2") format("woff2");
+  src: url("../vendor/fonts/open-sans/OpenSans-VariableFont_wdth,wght.woff2") format("woff2-variations");
   font-style: normal;
   font-weight: 300 800;
   font-display: swap;
@@ -43,6 +43,20 @@
   --app-danger: var(--marin-red);
   --app-success: #4f5f2f;
 
+  --app-font-heading:
+    "Jost",
+    Arial,
+    Verdana,
+    system-ui,
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    sans-serif;
+
+  /* Body/UI typeface per marin-digital-standards/brand/typography.md —
+     Open Sans is required for paragraphs, form controls, buttons, labels,
+     tables, and other routine interface copy; Verdana stays as a named
+     fallback per that same standard. */
   --app-font-body:
     "Open Sans",
     Arial,
@@ -52,19 +66,6 @@
     BlinkMacSystemFont,
     "Segoe UI",
     sans-serif;
-
-  --app-font-heading:
-    "Jost",
-    "Open Sans",
-    Arial,
-    Verdana,
-    system-ui,
-    -apple-system,
-    BlinkMacSystemFont,
-    "Segoe UI",
-    sans-serif;
-
-  --app-font-sans: var(--app-font-body);
 
   --pico-font-family-sans-serif: var(--app-font-body);
 
@@ -148,7 +149,6 @@ body {
   margin: 0;
   background: var(--app-bg-soft);
   color: var(--app-text);
-  font-family: var(--app-font-body);
 }
 
 nav {
