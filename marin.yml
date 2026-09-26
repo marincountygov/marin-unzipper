@@ -1,0 +1,17 @@
+schema: 1
+
+project:
+  name: Marin Unzipper
+  repo: marin-unzipper
+  type: app
+  owner: County of Marin
+  audience: staff
+  status: active
+
+platform:
+  marin-ui: 1.17.4
+  template: manual
+
+deployment:
+  target: github-pages
+  url: https://marincountygov.github.io/marin-unzipper/

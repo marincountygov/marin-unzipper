@@ -60,6 +60,7 @@
           <nav class="app-nav" id="app-nav" aria-label="Application navigation">
             <a href="#about">About</a>
             <a href="#updates">Updates</a>
+            <a href="#security">Security</a>
           </nav>
         </div>
       </div>
@@ -193,12 +194,31 @@
 
         <h3>Security notes</h3>
         <p>Only extract files from ZIP files you trust. Do not include sensitive information in file names unless your department has approved that naming format.</p>
+        <h3>Related information</h3>
+        <ul>
+          <li><a href="#security">Security</a></li>
+        </ul>
       </section>
 
       <section id="updates" class="app-card app-prose" data-tab-section="updates" data-updates-repo="marin-unzipper" data-app-name="Marin Unzipper" aria-labelledby="updates-heading" hidden>
         <h2 id="updates-heading">Updates</h2>
         <p data-updates-status class="app-help-text" role="status" aria-live="polite" aria-atomic="true">Marin Unzipper does not load update data automatically.</p>
         <p><a href="https://github.com/marincountygov/marin-unzipper/commits/main" target="_blank" rel="noreferrer">View release history on GitHub</a></p>
+      </section>
+
+      <section id="security" class="app-card" data-tab-section="security" data-security-json="security.json" hidden>
+        <h2>Security</h2>
+        <p>Marin Unzipper follows the <a href="https://github.com/marincountygov/marin-digital-standards/blob/main/security/standard.md">MarinOS security standard</a>.</p>
+        <h3>Report an issue</h3>
+        <p>See <a href="/.well-known/security.txt">security.txt</a> for contact details.</p>
+        <h3>Application security</h3>
+        <p data-security-status class="app-help-text" role="status" aria-live="polite" aria-atomic="true">Loading security information&hellip;</p>
+        <div data-security-content></div>
+        <h3>Technical information</h3>
+        <ul>
+          <li><a href="security.json">security.json</a></li>
+          <li><a href="/.well-known/security.txt">security.txt</a></li>
+        </ul>
       </section>
     </main>
 
