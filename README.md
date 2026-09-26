@@ -53,6 +53,10 @@ The unencrypted ZIP created from selected files should be easier to use with bui
 
 Users should only extract files from ZIP files they trust. Files, extracted content, and passwords stay in the browser. Do not include sensitive information in file names unless the naming format has been approved for the workflow.
 
+## Security
+
+Marin Unzipper follows the [MarinOS security standard](https://github.com/marincountygov/marin-digital-standards/blob/main/security/standard.md). See [`SECURITY.md`](SECURITY.md) to report an issue, the app's own `#security` section for a plain-language summary, or "Security notes" above for user-facing guidance.
+
 ## Updates
 
 The Updates page is local-first. It does not load update data automatically. It links to the `marincountygov/marin-unzipper` commit history for release review.
