@@ -1,39 +1,25 @@
 # Marin Unzipper
 
-Marin Unzipper is a MarinOS browser application for opening ZIP files locally. It decrypts and decompresses ZIP contents in the user's browser, then lets users download files individually or select multiple extracted files and download them as a new unencrypted ZIP.
+Browser-only MarinOS app for decrypting and decompressing ZIP files locally with the official vendored zip.js native browser build and Marin App Shell.
 
-## What it does
+## Security
 
-- Accepts one `.zip` file at a time.
-- Supports full-page drag-and-drop.
-- Supports password-protected ZIP extraction when the correct password is provided.
-- Lists extracted files after the ZIP is opened.
-- Allows individual file downloads.
-- Allows checked files to be repackaged into an unencrypted `.zip` file.
-- Keeps file processing local to the browser.
+Marin Unzipper follows the [MarinOS security standard](https://github.com/marincountygov/marin-digital-standards/blob/main/security/standard.md). See [`SECURITY.md`](SECURITY.md) to report an issue, or the app's own `#security` section for a plain-language summary.
 
-## What it does not do
+## Files
 
-- It does not upload files.
-- It does not store passwords.
-- It does not create encrypted ZIP files.
-- It does not write extracted files directly to the user's file system. The browser download action is used instead.
-- It does not automatically fetch GitHub update data at runtime. The MarinOS banner refreshes from the published MarinOS catalog.
+- `index.html` - MarinOS shell web components (`marin-os-banner`, `marin-app-header`, `marin-app-info`, `marin-app-footer`, `marin-app-feedback`), ZIP extraction form, file list table, and download controls.
+- `assets/app.css` - App-specific styles.
+- `assets/app.js` - File selection, full-page drag-and-drop, password handling, ZIP decryption/extraction, progress, cancellation, individual file downloads, and unencrypted ZIP repackaging.
+- `assets/vendor/zip.js/zip-native.min.js` - Official vendored zip.js native browser build.
+- `vendor/marinos/` - Vendored Marin App Shell release (do not edit vendored shell files directly).
+- `vendor/fonts/open-sans/OFL.txt` - Open Sans license file.
 
-## Local dependencies
+## Local-first runtime assets
 
-Required runtime assets are loaded from local paths:
+Marin Unzipper serves required runtime CSS, JavaScript, and font references from local first-party paths. Do not add Google Fonts, Adobe Fonts, jsDelivr, unpkg, cdnjs, or other runtime CDN/static asset references.
 
-```text
-vendor/pico.min.css
-shared/app-brand.css
-shared/app-shell.js
-assets/app.css
-assets/app.js
-assets/vendor/zip.js/zip-native.min.js
-```
-
-For full MarinOS typography, the shared brand bundle expects these local font files to be present in the target repository:
+Required local font files:
 
 ```text
 vendor/fonts/Jost-wght.ttf
@@ -41,38 +27,15 @@ vendor/fonts/open-sans/OpenSans-VariableFont_wdth,wght.woff2
 vendor/fonts/open-sans/OFL.txt
 ```
 
-The page does not depend on Google Fonts, Adobe Fonts, jsDelivr, unpkg, cdnjs, or other runtime CDN/static asset hosts. zip.js is loaded locally from `assets/vendor/zip.js/zip-native.min.js`.
+The Open Sans WOFF2 file and Jost TTF file must be present before publishing. They may be omitted from AI-generated transfer zips and then copied back into the paths above.
 
-## Browser notes
+## MarinOS integration
 
-Marin Unzipper is intended for modern browsers. Browser memory limits can affect very large ZIP files because extracted file blobs are held in browser memory until the ZIP is cleared or the page is reloaded.
+The app vendors Marin App Shell under `vendor/marinos/`, and the pinned shell version is recorded in `marin.yml`. The shell owns shared MarinOS structure and behavior while application-specific logic remains in the app's own files.
 
-The unencrypted ZIP created from selected files should be easier to use with built-in operating system archive tools than the original encrypted ZIP.
+## Notes
 
-## Security notes
-
-Users should only extract files from ZIP files they trust. Files, extracted content, and passwords stay in the browser. Do not include sensitive information in file names unless the naming format has been approved for the workflow.
-
-## Updates
-
-The Updates page is local-first. It does not load update data automatically. It links to the `marincountygov/marin-unzipper` commit history for release review.
-
-## Deployment
-
-This is a static site. Deploy these files together:
-
-```text
-index.html
-assets/app.css
-assets/app.js
-assets/vendor/zip.js/zip-native.min.js
-shared/app-brand.css
-shared/app-shell.js
-vendor/pico.min.css
-vendor/fonts/README.md
-vendor/fonts/open-sans/OFL.txt
-BRAND_VERSION
-README.md
-```
-
-Restore the font binaries listed above from the existing source package before publishing if the target repository does not already contain them. No server-side code is required.
+- Files selected for extraction are processed locally in the browser and are not uploaded by this page.
+- `assets/vendor/zip.js/zip-native.min.js` is local to this bundle. No zip.js CDN dependency is required.
+- The Updates page loads release information via the shell.
+- Browser memory limits can affect very large ZIP files because extracted file blobs are held in browser memory until the ZIP is cleared or the page is reloaded.
