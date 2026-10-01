@@ -1,6 +1,7 @@
 # Marin App Shell distribution
 
-Version: `1.0.0`  
+Version: `1.0.1`
+
 Marin UI baseline: `1.18.0`
 
 Copy this directory into an application's `vendor/marinos/` directory without modifying its contents.
