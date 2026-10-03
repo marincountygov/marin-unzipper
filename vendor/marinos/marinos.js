@@ -6,7 +6,7 @@
     return;
   }
 
-  const SHELL_VERSION = "1.1.1";
+  const SHELL_VERSION = "1.1.2";
   const MARIN_UI_VERSION = "1.18.0";
   const MARINOS_URL = "https://marincountygov.github.io/marin-os/";
   const CATALOG_URL = `${MARINOS_URL}catalog.json`;
@@ -31,9 +31,9 @@
   // Text-only fallback links: app identity glyphs belong to the catalog, not
   // independent hand-maintained shapes inside the shell.
   const FALLBACK_APPS = Object.freeze([
-    { name: "MarinMagic", url: "https://marincountygov.github.io/marin-magic/" },
+    { name: "Marin Magic", url: "https://marincountygov.github.io/marin-magic/" },
     { name: "Marin Decision Maker", url: "https://marincountygov.github.io/marin-decision-maker/" },
-    { name: "MarinDocs", url: "https://marincountygov.github.io/marin-docs/" },
+    { name: "Marin Docs", url: "https://marincountygov.github.io/marin-docs/" },
   ]);
 
   function componentWarning(element, message) {
