@@ -6,10 +6,10 @@ project:
   type: app
   owner: County of Marin
   audience: staff
-  status: beta
+  status: live
 
 platform:
-  shell: 1.1.3
+  shell: 1.2.1
 
 deployment:
   target: github-pages

@@ -6,9 +6,10 @@
     return;
   }
 
-  const SHELL_VERSION = "1.1.3";
-  const MARIN_UI_VERSION = "1.18.0";
+  const SHELL_VERSION = "1.2.1";
+  const MARIN_UI_VERSION = "1.19.0";
   const MARINOS_URL = "https://marincountygov.github.io/marin-os/";
+  const MARINOS_STATUS_URL = `${MARINOS_URL}#status`;
   const CATALOG_URL = `${MARINOS_URL}catalog.json`;
   const FEEDBACK_URL = "https://form.asana.com/?k=qVUT83d5DBmlDiIyi-WAyQ&d=23133298259496";
   const SECURITY_STANDARD_URL =
@@ -20,6 +21,7 @@
     accessibility: "Accessibility",
     updates: "Updates",
   });
+  const MARINOS_STATUS_LABELS = Object.freeze({ alpha: "Alpha", beta: "Beta", live: "Live" });
 
   // Generated from the hash-locked vendor/icons/lucide/*.svg at build time.
   const LUCIDE_ICONS = Object.freeze({"check": "<path d=\"M20 6 9 17l-5-5\"/>", "chevron-down": "<path d=\"m6 9 6 6 6-6\"/>", "copy": "<rect width=\"14\" height=\"14\" x=\"8\" y=\"8\" rx=\"2\" ry=\"2\"/><path d=\"M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2\"/>", "layout-grid": "<rect width=\"7\" height=\"7\" x=\"3\" y=\"3\" rx=\"1\"/><rect width=\"7\" height=\"7\" x=\"14\" y=\"3\" rx=\"1\"/><rect width=\"7\" height=\"7\" x=\"14\" y=\"14\" rx=\"1\"/><rect width=\"7\" height=\"7\" x=\"3\" y=\"14\" rx=\"1\"/>"});
@@ -169,6 +171,77 @@
     return svg.childElementCount ? svg : null;
   }
 
+  function createStatusBadge(status, className = "", href = "") {
+    const normalizedStatus = typeof status === "string" ? status.trim().toLowerCase() : "";
+    const label = MARINOS_STATUS_LABELS[normalizedStatus];
+    if (!label) return null;
+
+    const badge = href ? document.createElement("a") : document.createElement("span");
+    badge.className = ["app-status", className].filter(Boolean).join(" ");
+    badge.dataset.status = normalizedStatus;
+    badge.textContent = label;
+    if (href) badge.href = href;
+    return badge;
+  }
+
+  function manifestProjectStatus(source) {
+    if (typeof source !== "string") return "";
+    const lines = source.replace(/\r\n?/g, "\n").split("\n");
+    let projectIndent = null;
+
+    for (const line of lines) {
+      if (!line.trim() || line.trimStart().startsWith("#")) continue;
+      const indent = line.length - line.trimStart().length;
+
+      if (projectIndent === null) {
+        if (/^project\s*:\s*(?:#.*)?$/.test(line.trim())) projectIndent = indent;
+        continue;
+      }
+
+      if (indent <= projectIndent) break;
+      if (indent !== projectIndent + 2) continue;
+
+      const match = line.trim().match(/^status\s*:\s*(?:"([^"]*)"|'([^']*)'|([^#]*?))\s*(?:#.*)?$/);
+      if (!match) continue;
+      const value = (match[1] ?? match[2] ?? match[3] ?? "").trim().toLowerCase();
+      return MARINOS_STATUS_LABELS[value] ? value : "";
+    }
+    return "";
+  }
+
+  let localManifestStatus = "";
+
+  function renderAppTitleStatus(status, source) {
+    const title = document.querySelector(".app-title");
+    if (!title) return false;
+    const badge = createStatusBadge(status, "app-title__status", MARINOS_STATUS_URL);
+    if (!badge) return false;
+
+    // Only replace badges owned by the shell. App-authored title content is
+    // never removed. The source marker also lets catalog fallback yield to the
+    // local manifest once it arrives.
+    title.querySelector(".app-title__status[data-marinos-status]")?.remove();
+    badge.dataset.marinosStatus = source;
+    title.append(document.createTextNode(" "), badge);
+    return true;
+  }
+
+  // project.status in the app's own marin.yml is the local source of truth.
+  // Read only that known scalar instead of introducing a browser YAML parser.
+  // If it is missing/unavailable/legacy, catalog matching below remains the
+  // compatibility fallback established in 1.2.0.
+  fetch("marin.yml", { cache: "no-store" })
+    .then((response) => (response.ok ? response.text() : Promise.reject(new Error("bad response"))))
+    .then((source) => {
+      const status = manifestProjectStatus(source);
+      if (!status) return;
+      localManifestStatus = status;
+      renderAppTitleStatus(status, "manifest");
+    })
+    .catch(() => {
+      // Status is supplementary UI; leave catalog/static fallback behavior intact.
+    });
+
   function createMenuLink(entry) {
     const href = safeLinkUrl(entry?.url);
     const name = typeof entry?.name === "string" ? entry.name.trim() : "";
@@ -186,7 +259,13 @@
       link.append(icon);
     }
 
-    link.append(document.createTextNode(name));
+    const nameElement = document.createElement("span");
+    nameElement.className = "marinos-menu__name";
+    nameElement.textContent = name;
+    link.append(nameElement);
+
+    const badge = createStatusBadge(entry?.status, "marinos-menu__status");
+    if (badge) link.append(badge);
     return link;
   }
 
@@ -221,9 +300,16 @@
       toggle.append(brandIcon, document.createTextNode("MarinOS"));
 
       if (label) {
-        const sup = document.createElement("sup");
-        sup.textContent = label;
-        toggle.append(sup);
+        const statusBadge = createStatusBadge(label, "marinos-banner__status");
+        if (statusBadge) {
+          toggle.append(statusBadge);
+        } else {
+          // Preserve arbitrary pre-1.2.0 labels for compatibility. Known
+          // Alpha/Beta/Live values use the shared app-status component.
+          const sup = document.createElement("sup");
+          sup.textContent = label;
+          toggle.append(sup);
+        }
       }
 
       const caret = createLucideIcon("chevron-down", "menu-toggle__caret");
@@ -276,10 +362,8 @@
       const identity = document.createElement("div");
       identity.className = "app-identity";
 
-      const homeLink = document.createElement("a");
-      homeLink.className = "app-identity__home app-title-row";
-      homeLink.href = "./";
-      homeLink.setAttribute("aria-label", `${appName} home`);
+      const titleRow = document.createElement("div");
+      titleRow.className = "app-title-row";
 
       const icon = document.createElement("span");
       icon.className = "app-icon";
@@ -295,7 +379,12 @@
       titleCopy.className = "app-title-copy";
       const heading = document.createElement("h1");
       heading.className = "app-title";
-      heading.textContent = appName;
+      const homeLink = document.createElement("a");
+      homeLink.className = "app-title__link";
+      homeLink.href = "./";
+      homeLink.setAttribute("aria-label", `${appName} home`);
+      homeLink.textContent = appName;
+      heading.append(homeLink);
       titleCopy.append(heading);
 
       if (description) {
@@ -305,8 +394,8 @@
         titleCopy.append(subtitle);
       }
 
-      homeLink.append(icon, titleCopy);
-      identity.append(homeLink);
+      titleRow.append(icon, titleCopy);
+      identity.append(titleRow);
 
       const actions = document.createElement("div");
       actions.className = "app-header__actions";
@@ -717,7 +806,7 @@
     // Bump this whenever the expected catalog shape or rendering changes
     // (for example, adding the `icon` field) so browsers holding an older
     // cached shape refetch immediately instead of waiting out the TTL.
-    const CACHE_KEY = "marinos-catalog-cache-v2";
+    const CACHE_KEY = "marinos-catalog-cache-v3";
     const CACHE_TTL_MS = 6 * 60 * 60 * 1000;
 
     function readCatalogCache() {
@@ -757,6 +846,21 @@
       else marinosMenuPanel.append(fragment);
     }
 
+    function renderOwnStatusBadge(entries) {
+      if (!Array.isArray(entries) || localManifestStatus) return;
+
+      const header = document.querySelector("marin-app-header");
+      const appId = (header ? normalizedAttribute(header, "app-id") : "") || document.body.dataset.appId || "";
+      const current = window.location.href;
+      const self = appId
+        ? entries.find((entry) => entry && entry.id === appId)
+        : entries.find((entry) => {
+            const href = safeLinkUrl(entry?.url);
+            return href && current.startsWith(href);
+          });
+      renderAppTitleStatus(self?.status, "catalog");
+    }
+
     // Stale-while-revalidate: the cache is only for instant paint on repeat
     // visits, never for skipping the network. Always fetch fresh in the
     // background and re-render if it differs, so a catalog.json fix reaches
@@ -764,7 +868,10 @@
     // later — a stale-icon report once took hours to explain because of
     // this cache, before it revalidated on every load like this.
     const cachedEntries = readCatalogCache();
-    if (cachedEntries) renderMarinosMenu(cachedEntries);
+    if (cachedEntries) {
+      renderMarinosMenu(cachedEntries);
+      renderOwnStatusBadge(cachedEntries);
+    }
 
     const controller = new AbortController();
     const timeout = setTimeout(() => controller.abort(), 4000);
@@ -772,7 +879,10 @@
       .then((response) => (response.ok ? response.json() : Promise.reject(new Error("bad response"))))
       .then((entries) => {
         writeCatalogCache(entries);
-        if (JSON.stringify(entries) !== JSON.stringify(cachedEntries)) renderMarinosMenu(entries);
+        if (JSON.stringify(entries) !== JSON.stringify(cachedEntries)) {
+          renderMarinosMenu(entries);
+          renderOwnStatusBadge(entries);
+        }
       })
       .catch(() => {
         // Leave whatever's already rendered (cache or static banner links) as-is.
