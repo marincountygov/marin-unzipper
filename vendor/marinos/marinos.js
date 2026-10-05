@@ -6,7 +6,7 @@
     return;
   }
 
-  const SHELL_VERSION = "1.1.2";
+  const SHELL_VERSION = "1.1.3";
   const MARIN_UI_VERSION = "1.18.0";
   const MARINOS_URL = "https://marincountygov.github.io/marin-os/";
   const CATALOG_URL = `${MARINOS_URL}catalog.json`;
@@ -58,12 +58,30 @@
     return template instanceof HTMLTemplateElement ? template.content.cloneNode(true) : null;
   }
 
+  function defaultIconStrokeWidth(svg) {
+    // Legacy app identity artwork uses 48x48 coordinates; Lucide uses 24x24.
+    // Only the known 48x48 compatibility case gets a different default.
+    // Read the attribute, not rendered geometry (no layout measurement).
+    const parts = (svg.getAttribute("viewBox") || "").trim().split(/[\s,]+/);
+    const svgNumber = /^[+-]?(?:\d+(?:\.\d*)?|\.\d+)(?:e[+-]?\d+)?$/i;
+    const valid = parts.length === 4 && parts.every(
+      (part) => svgNumber.test(part) && Number.isFinite(Number(part))
+    );
+    return valid && Number(parts[2]) === 48 && Number(parts[3]) === 48
+      ? "4"
+      : LUCIDE_ATTRIBUTES["stroke-width"];
+  }
+
   function addLucideDefaults(svg) {
     // Backward compatibility for 1.0.x icon templates that relied on shell CSS.
     // Do not rewrite consumer geometry or silently replace its identity icon.
     Object.entries(LUCIDE_ATTRIBUTES).forEach(([name, value]) => {
-      if (!svg.hasAttribute(name)) svg.setAttribute(name, value);
+      if (name !== "stroke-width" && !svg.hasAttribute(name)) svg.setAttribute(name, value);
     });
+    // An explicit width is app-owned, even when it differs from our default.
+    if (!svg.hasAttribute("stroke-width")) {
+      svg.setAttribute("stroke-width", defaultIconStrokeWidth(svg));
+    }
     svg.setAttribute("aria-hidden", "true");
     svg.setAttribute("focusable", "false");
     return svg;
