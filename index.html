@@ -43,7 +43,7 @@
                   <button type="button" id="choose-zip-button">Choose ZIP file</button>
                   <button type="button" id="clear-zip-button" class="secondary" disabled>Clear ZIP</button>
                 </div>
-                <input id="zip-input" class="visually-hidden" type="file" accept=".zip,application/zip,application/x-zip-compressed">
+                <input id="zip-input" class="visually-hidden" type="file" tabindex="-1" aria-label="Choose a ZIP file" accept=".zip,application/zip,application/x-zip-compressed">
                 <div class="unzip-summary" aria-live="polite">
                   <span class="app-badge" id="selected-file-name">No ZIP selected</span>
                   <span class="app-badge" id="selected-file-size">0 bytes</span>
