@@ -74,7 +74,6 @@
     }
   ],
   "publicSecurity": {
-    "profile": "For County staff",
     "lastReviewed": "2026-09-25",
     "controls": [
       "HTTPS",
