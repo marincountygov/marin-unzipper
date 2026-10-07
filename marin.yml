@@ -9,7 +9,7 @@ project:
   status: live
 
 platform:
-  shell: 1.8.0
+  shell: 1.9.0
 
 deployment:
   target: github-pages
@@ -17,3 +17,5 @@ deployment:
 
 ai:
   used: false
+
+services: none
