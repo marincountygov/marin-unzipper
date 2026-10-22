@@ -91,7 +91,9 @@
     elements.togglePasswordButton.addEventListener("click", () => {
       const show = elements.password.type === "password";
       elements.password.type = show ? "text" : "password";
-      elements.togglePasswordButton.textContent = show ? "Hide password" : "Show password";
+      const toggleLabel = show ? "Hide password" : "Show password";
+      elements.togglePasswordButton.setAttribute("aria-label", toggleLabel);
+      elements.togglePasswordButton.title = toggleLabel;
       elements.togglePasswordButton.setAttribute("aria-pressed", String(show));
     });
   }
@@ -418,9 +420,11 @@
       downloadCell.className = "unzip-file-download";
       const downloadButton = document.createElement("button");
       downloadButton.type = "button";
-      downloadButton.className = "secondary";
+      downloadButton.className = "action-button";
+      downloadButton.dataset.icon = "download";
       downloadButton.dataset.downloadEntry = item.id;
-      downloadButton.textContent = "Download";
+      downloadButton.setAttribute("aria-label", `Download ${item.originalName || item.safePath}`);
+      downloadButton.title = "Download";
       downloadCell.append(downloadButton);
 
       row.append(selectCell, fileCell, sizeCell, downloadCell);

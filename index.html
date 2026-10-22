@@ -40,8 +40,8 @@
                 <h2 id="start-heading">Drop a ZIP file anywhere on this page</h2>
                 <p class="app-help-text">You can also choose a ZIP file using the button below. Files remain only on your device.</p>
                 <div class="unzip-drop-actions">
-                  <button type="button" id="choose-zip-button">Choose ZIP file</button>
-                  <button type="button" id="clear-zip-button" class="secondary" disabled>Clear ZIP</button>
+                  <button type="button" id="choose-zip-button" class="action-button" data-icon="upload">Choose ZIP file</button>
+                  <button type="button" id="clear-zip-button" class="action-button" data-icon="x" aria-label="Clear ZIP" title="Clear ZIP" disabled></button>
                 </div>
                 <input id="zip-input" class="visually-hidden" type="file" tabindex="-1" aria-label="Choose a ZIP file" accept=".zip,application/zip,application/x-zip-compressed">
                 <div class="unzip-summary" aria-live="polite">
@@ -80,7 +80,7 @@
             </div>
 
             <div class="unzip-password-actions app-field">
-              <button type="button" id="toggle-password-button" class="secondary" aria-pressed="false">Show password</button>
+              <button type="button" id="toggle-password-button" class="action-button" data-icon="eye" aria-pressed="false" aria-label="Show password" title="Show password"></button>
             </div>
 
             <div id="progress-wrap" class="unzip-progress" hidden>
@@ -91,7 +91,7 @@
 
             <div class="unzip-actions">
               <button type="submit" id="open-zip-button" disabled>Decrypt and list files</button>
-              <button type="button" id="cancel-button" class="secondary" hidden>Cancel</button>
+              <button type="button" id="cancel-button" class="action-button" hidden>Cancel</button>
             </div>
           </form>
         </div>
@@ -110,13 +110,13 @@
           </div>
 
           <div class="unzip-toolbar">
-            <button type="button" id="select-all-button" class="secondary">Select all</button>
-            <button type="button" id="clear-selection-button" class="secondary">Clear selection</button>
+            <button type="button" id="select-all-button" class="action-button">Select all</button>
+            <button type="button" id="clear-selection-button" class="action-button">Clear selection</button>
             <div class="app-field unzip-output-name">
               <label for="output-zip-name">Unencrypted ZIP file name</label>
               <input id="output-zip-name" type="text" value="marin-unzipped-files.zip" autocomplete="off">
             </div>
-            <button type="button" id="download-selected-button" disabled>Download selected as unencrypted ZIP</button>
+            <button type="button" id="download-selected-button" class="action-button" data-icon="download" disabled>Download selected as unencrypted ZIP</button>
           </div>
 
           <div id="results-empty" class="app-empty unzip-empty" hidden>No files were found in this ZIP.</div>
