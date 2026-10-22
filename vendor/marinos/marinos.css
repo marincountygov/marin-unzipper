@@ -1848,7 +1848,7 @@ th[aria-sort="descending"] .sort-button::after {
   stroke-linejoin: round;
 }
 
-/* Marin App Shell 1.17.2: component integration only.
+/* Marin App Shell 1.17.3: component integration only.
    General visual rules come from the locked, unmodified Marin UI input. */
 marin-os-banner,
 marin-app-header,
@@ -2431,4 +2431,18 @@ th[aria-sort="ascending"] .sort-button::after {
 
 th[aria-sort="descending"] .sort-button::after {
   content: " \25bc";
+}
+
+/* A visually hidden form control stays 1 px. Pico makes every input as wide as its row and at least 44 px tall, with a
+   selector too specific for .visually-hidden to win, so a hidden file input made the page wider than the window. */
+input.visually-hidden,
+select.visually-hidden,
+textarea.visually-hidden {
+  width: 1px !important;
+  height: 1px !important;
+  min-width: 0 !important;
+  min-height: 0 !important;
+  margin: -1px !important;
+  padding: 0 !important;
+  border: 0 !important;
 }
