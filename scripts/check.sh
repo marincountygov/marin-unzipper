@@ -3,12 +3,13 @@ set -euo pipefail
 
 ROOT_DIR=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.." && pwd)
 SHELL_DIR="$ROOT_DIR/../marin-app-shell"
-RUN_BROWSER=0
+BROWSER_MODE=""
 case "${1:-}" in
   '') ;;
-  --browser) RUN_BROWSER=1 ;;
+  --browser) BROWSER_MODE="http" ;;
+  --browser-in-memory) BROWSER_MODE="in-memory" ;;
   -h|--help)
-    printf 'Usage: bash scripts/check.sh [--browser]\n'
+    printf 'Usage: bash scripts/check.sh [--browser|--browser-in-memory]\n'
     exit 0
     ;;
   *) printf 'Unknown option: %s\n' "$1" >&2; exit 2 ;;
@@ -30,9 +31,18 @@ else
   printf 'SKIP: Node is unavailable; JavaScript syntax was not checked.\n' >&2
 fi
 
-if [[ "$RUN_BROWSER" == 1 ]]; then
-  printf "No browser tests yet for this app.\n"
+if [[ -n "$BROWSER_MODE" ]]; then
+  TEST_RUNNER="$ROOT_DIR/tests/browser_roundtrip.py"
+  if [[ ! -f "$TEST_RUNNER" ]]; then
+    printf 'ERROR: The browser round-trip test is missing from this checkout.\n' >&2
+    exit 1
+  fi
+  EXTRA_ARGS=()
+  if [[ "$BROWSER_MODE" == "in-memory" ]]; then EXTRA_ARGS+=(--in-memory); fi
+  python3 "$TEST_RUNNER" "${EXTRA_ARGS[@]}" \
+    --zipper-dir "$ROOT_DIR/../marin-zipper" \
+    --unzipper-dir "$ROOT_DIR"
 else
-  printf 'SKIP: Browser tests not requested; run with --browser to include them.\n'
+  printf 'SKIP: Browser tests not requested; run with --browser or --browser-in-memory.\n'
 fi
 printf 'Requested checks completed successfully.\n'

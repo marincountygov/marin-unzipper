@@ -39,3 +39,40 @@ The app vendors Marin App Shell under `vendor/marinos/`, and the pinned shell ve
 - `assets/vendor/zip.js/zip-native.min.js` is local to this bundle. No zip.js CDN dependency is required.
 - The Updates page loads release information via the shell.
 - Browser memory limits can affect very large ZIP files because extracted file blobs are held in browser memory until the ZIP is cleared or the page is reloaded.
+
+## Encrypted ZIP browser regression test
+
+The round-trip integration test uses **both** Marin Zipper and Marin Unzipper.
+Clone the repositories into sibling directories named `marin-zipper/` and
+`marin-unzipper/`. The canonical test and pinned, test-only dependencies
+are located in `marin-unzipper/tests/`. The test creates two wholly synthetic
+files, downloads an AES-256 encrypted ZIP through Zipper, checks that
+Unzipper rejects an incorrect password, then downloads and compares every
+decrypted file byte-for-byte (including its SHA-256 digest). No runtime
+dependencies are added to either deployed application.
+
+Install the test dependencies and a compatible Chromium once:
+
+```bash
+python3 -m pip install -r tests/requirements.txt
+python3 -m playwright install chromium
+```
+
+From this repository, run the static checks and browser integration test:
+
+```bash
+bash scripts/check.sh --browser
+```
+
+In a browser runner that prohibits localhost navigation, the equivalent
+JavaScript/download workflow can be tested by injecting the checked-in
+application assets into in-memory browser pages:
+
+```bash
+bash scripts/check.sh --browser-in-memory
+```
+
+The in-memory mode does **not** verify HTTP delivery; the regular
+`--browser` mode remains the preferred integration check. Both modes
+block external network requests. Use `CHROMIUM_EXECUTABLE=/path/to/chromium`
+to select an installed Chromium binary if necessary.

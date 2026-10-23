@@ -1,0 +1,2 @@
+# Test dependency only; not used by either published browser application.
+playwright==1.57.0
