@@ -13,7 +13,6 @@
     zipFile: null,
     extractedItems: [],
     selectedIds: new Set(),
-    dragDepth: 0,
     isBusy: false,
     abortController: null
   };
@@ -31,7 +30,6 @@
     }
 
     setupFileControls(elements);
-    setupDragAndDrop(elements);
     setupForm(elements);
     setupResultControls(elements);
     updateZipSummary(elements);
@@ -77,11 +75,12 @@
   }
 
   function setupFileControls(elements) {
-    elements.chooseZipButton.addEventListener("click", () => elements.zipInput.click());
-    elements.zipInput.addEventListener("change", () => {
-      const [file] = Array.from(elements.zipInput.files || []);
-      if (file) selectZipFile(file, elements);
-      elements.zipInput.value = "";
+    marinUpload({
+      button: elements.chooseZipButton,
+      input: elements.zipInput,
+      accept: [".zip"],
+      onFile: (file) => selectZipFile(file, elements),
+      onMessage: (text) => setStatus(elements, text, "warning")
     });
 
     elements.clearZipButton.addEventListener("click", () => clearZip(elements));
@@ -95,51 +94,6 @@
       elements.togglePasswordButton.setAttribute("aria-label", toggleLabel);
       elements.togglePasswordButton.title = toggleLabel;
       elements.togglePasswordButton.setAttribute("aria-pressed", String(show));
-    });
-  }
-
-  function setupDragAndDrop(elements) {
-    const showDrag = () => {
-      document.body.classList.add("is-dragging");
-      elements.dropzone.dataset.active = "true";
-    };
-    const hideDrag = () => {
-      state.dragDepth = 0;
-      document.body.classList.remove("is-dragging");
-      elements.dropzone.dataset.active = "false";
-    };
-
-    ["dragenter", "dragover", "dragleave", "drop"].forEach((eventName) => {
-      document.addEventListener(eventName, (event) => {
-        event.preventDefault();
-        event.stopPropagation();
-      });
-    });
-
-    document.addEventListener("dragenter", () => {
-      state.dragDepth += 1;
-      showDrag();
-    });
-
-    document.addEventListener("dragover", (event) => {
-      event.dataTransfer.dropEffect = "copy";
-      showDrag();
-    });
-
-    document.addEventListener("dragleave", () => {
-      state.dragDepth = Math.max(0, state.dragDepth - 1);
-      if (state.dragDepth === 0) hideDrag();
-    });
-
-    document.addEventListener("drop", (event) => {
-      hideDrag();
-      const files = Array.from(event.dataTransfer?.files || []);
-      if (!files.length) return;
-      const zipFile = files.find((file) => isLikelyZipFile(file)) || files[0];
-      selectZipFile(zipFile, elements);
-      if (files.length > 1) {
-        setStatus(elements, "Only one ZIP file can be opened at a time. The first ZIP-like file was selected.", "warning");
-      }
     });
   }
 
@@ -478,15 +432,7 @@
   }
 
   function downloadBlob(blob, filename) {
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement("a");
-    link.href = url;
-    link.download = filename;
-    link.style.display = "none";
-    document.body.append(link);
-    link.click();
-    link.remove();
-    window.setTimeout(() => URL.revokeObjectURL(url), 60_000);
+    marinDownload({ content: blob, name: filename });
   }
 
   function isLikelyZipFile(file) {

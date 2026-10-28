@@ -10,16 +10,6 @@
     <link rel="stylesheet" href="assets/app.css">
   </head>
   <body>
-    <div class="unzip-drop-overlay" aria-hidden="true">
-      <div class="unzip-drop-overlay__panel">
-        <span class="unzip-drop-overlay__icon" aria-hidden="true">
-          <svg viewBox="0 0 24 24"><path d="M13.659 22H18a2 2 0 0 0 2-2V8a2.4 2.4 0 0 0-.706-1.706l-3.588-3.588A2.4 2.4 0 0 0 14 2H6a2 2 0 0 0-2 2v11.5"/><path d="M14 2v5a1 1 0 0 0 1 1h5"/><path d="M8 12v-1"/><path d="M8 18v-2"/><path d="M8 7V6"/><circle cx="8" cy="20" r="2"/></svg>
-        </span>
-        <h2>Drop a ZIP file to open it</h2>
-        <p class="app-help-text">Files are processed locally in this browser. They are not uploaded by this page.</p>
-      </div>
-    </div>
-
     <marin-os-banner></marin-os-banner>
 
     <marin-app-header
@@ -35,15 +25,15 @@
       <section id="start" data-tab-section="start" aria-labelledby="start-heading">
         <div class="unzip-grid">
           <div class="app-card">
-            <div id="dropzone" class="unzip-dropzone" data-active="false">
+            <div id="dropzone" class="unzip-dropzone">
               <div>
-                <h2 id="start-heading">Drop a ZIP file anywhere on this page</h2>
-                <p class="app-help-text">You can also choose a ZIP file using the button below. Files remain only on your device.</p>
+                <h2 id="start-heading">Upload</h2>
+                <p class="app-help-text">Drag and drop a <code>.zip</code> file anywhere on this page, or use the browse button. Your file stays in this browser.</p>
                 <div class="unzip-drop-actions">
-                  <button type="button" id="choose-zip-button" class="action-button" data-icon="upload">Choose ZIP file</button>
+                  <button type="button" id="choose-zip-button" class="action-button" data-icon="upload">Browse files</button>
                   <button type="button" id="clear-zip-button" class="action-button" data-icon="x" aria-label="Clear ZIP" title="Clear ZIP" disabled></button>
                 </div>
-                <input id="zip-input" class="visually-hidden" type="file" tabindex="-1" aria-label="Choose a ZIP file" accept=".zip,application/zip,application/x-zip-compressed">
+                <input id="zip-input" class="visually-hidden" type="file" tabindex="-1" aria-label="Upload a ZIP file" accept=".zip,application/zip,application/x-zip-compressed">
                 <div class="unzip-summary" aria-live="polite">
                   <span class="app-badge" id="selected-file-name">No ZIP selected</span>
                   <span class="app-badge" id="selected-file-size">0 bytes</span>
