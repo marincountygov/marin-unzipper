@@ -31,24 +31,6 @@ body {
   gap: 1rem;
 }
 
-.app-icon svg,
-.marinos-banner__icon svg,
-.marinos-menu__icon svg,
-.unzip-drop-overlay__icon svg {
-  display: block;
-  width: 100%;
-  height: 100%;
-  fill: none;
-  stroke: currentColor;
-  stroke-linecap: round;
-  stroke-linejoin: round;
-}
-
-.app-icon svg,
-.unzip-drop-overlay__icon svg {
-  stroke-width: 1;
-}
-
 .unzip-grid {
   display: grid;
   grid-template-columns: minmax(0, 1fr) minmax(18rem, 22rem);
@@ -71,12 +53,6 @@ body {
   padding: 2rem;
   text-align: center;
   transition: border-color 160ms ease, background-color 160ms ease, transform 160ms ease;
-}
-
-.unzip-dropzone[data-active="true"] {
-  border-color: var(--app-accent);
-  background: color-mix(in srgb, var(--app-accent) 14%, transparent);
-  transform: translateY(-1px);
 }
 
 .unzip-drop-actions,
@@ -191,41 +167,6 @@ body {
 
 .unzip-empty {
   margin-block: 1rem;
-}
-
-.unzip-drop-overlay {
-  position: fixed;
-  inset: 0;
-  z-index: 1000;
-  display: none;
-  align-items: center;
-  justify-content: center;
-  padding: 2rem;
-  background: color-mix(in srgb, var(--app-accent) 18%, var(--app-surface));
-  backdrop-filter: blur(2px);
-}
-
-body.is-dragging .unzip-drop-overlay {
-  display: flex;
-}
-
-.unzip-drop-overlay__panel {
-  width: min(34rem, 100%);
-  border-radius: 1rem;
-  padding: 2rem;
-  text-align: center;
-  background: var(--app-surface);
-  color: var(--app-text);
-  box-shadow: 0 1.5rem 4rem rgba(0, 0, 0, 0.18);
-}
-
-.unzip-drop-overlay__icon {
-  display: inline-grid;
-  place-items: center;
-  width: 4rem;
-  height: 4rem;
-  margin-block-end: 1rem;
-  color: var(--app-accent);
 }
 
 
