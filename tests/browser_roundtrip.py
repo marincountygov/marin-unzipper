@@ -14,12 +14,13 @@ from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
 import io
 import os
 from pathlib import Path
-import re
 import shutil
 import struct
 from threading import Thread
 from urllib.parse import urlsplit
 import zipfile
+
+from html_fixture import remove_from_html
 
 UNZIPPER = Path(__file__).resolve().parents[1]
 ZIPPER = UNZIPPER.parent / "marin-zipper"
@@ -89,10 +90,7 @@ def open_app(context, app_dir: Path, url: str | None, *, unzipper: bool):
         # Inject the actual HTML, CSS, library, shell, and app scripts rather
         # than mocking the ZIP library or the application implementation.
         markup = (app_dir / "index.html").read_text(encoding="utf-8")
-        markup = re.sub(r"<script\b[^>]*>.*?</script>", "", markup, flags=re.I | re.S)
-        markup = re.sub(
-            r"<link\b[^>]*rel=[\"']stylesheet[\"'][^>]*>", "", markup, flags=re.I
-        )
+        markup = remove_from_html(markup, "scripts", "stylesheets")
         page.set_content(markup, wait_until="load")
         for stylesheet in ("vendor/marinos/marinos.css", "assets/app.css"):
             page.add_style_tag(content=(app_dir / stylesheet).read_text(encoding="utf-8"))
